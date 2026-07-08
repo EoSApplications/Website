@@ -8,13 +8,21 @@ import sys
 
 
 
+# Store the single canonical version for the whole suite -- EoSApplications and
+# every app it bundles (EoSAlign, EoSHolo, EoSFitting) release in lockstep, so this
+# is the one line a release bumps. Every other file that needs the version
+# (pyproject.toml, the Windows installer, README badges, ...) is generated/synced
+# from this value by Installer_Files/Generate_Pyproject_Toml.py and
+# Installer_Files/Sync_App_Version.py -- never hand-edit a version number elsewhere.
+Current_Suite_Version = "1.0.1"
+
 # Store the version and repository information for each application
 Applications = {
     "EoSApplications": {
         "App_Id": "EoSApplications",
         "Display_Name": "EoS Applications",
-        "Version": "1.0.0",
-        "Is_Prerelease": True,
+        "Version": Current_Suite_Version,
+        "Is_Prerelease": False,
         "Github_Owner": "EoSApplications",
         "Github_Repository": "EoSAlign",
         "Platform_Assets": {
@@ -27,8 +35,8 @@ Applications = {
     "EoSAlign": {
         "App_Id": "EoSAlign",
         "Display_Name": "EoS Align",
-        "Version": "1.0.0",
-        "Is_Prerelease": True,
+        "Version": Current_Suite_Version,
+        "Is_Prerelease": False,
         "Github_Owner": "EoSApplications",
         "Github_Repository": "EoSAlign",
         "Platform_Assets": {
@@ -40,8 +48,8 @@ Applications = {
     "EoSHolo": {
         "App_Id": "EoSHolo",
         "Display_Name": "EoS Holo",
-        "Version": "1.0.0",
-        "Is_Prerelease": True,
+        "Version": Current_Suite_Version,
+        "Is_Prerelease": False,
         "Github_Owner": "EoSApplications",
         "Github_Repository": "EoSAlign",
         "Platform_Assets": {
@@ -53,8 +61,8 @@ Applications = {
     "EoSFitting": {
         "App_Id": "EoSFitting",
         "Display_Name": "EoS Fitting",
-        "Version": "1.0.0",
-        "Is_Prerelease": True,
+        "Version": Current_Suite_Version,
+        "Is_Prerelease": False,
         "Github_Owner": "EoSApplications",
         "Github_Repository": "EoSAlign",
         "Platform_Assets": {
@@ -67,9 +75,9 @@ Applications = {
 
 # Store the child-application versions bundled with the wrapper application
 EoSApplications__Bundled_Applications = {
-    "EoSAlign": "1.0.0",
-    "EoSHolo": "1.0.0",
-    "EoSFitting": "1.0.0",
+    "EoSAlign": Current_Suite_Version,
+    "EoSHolo": Current_Suite_Version,
+    "EoSFitting": Current_Suite_Version,
 }
 
 # EoSFitting is not ready for users to launch yet; keep it out of the Applications
@@ -148,14 +156,16 @@ def Get_EoSApplications__Child_Application_Ids():
     # infers it from the running entry-point's file name instead
         # A frozen build's sys.argv[0] is the executable path (e.g. ".../EoSHolo.exe")
         # A plain Python run's sys.argv[0] is the launched script path (e.g. ".../EoSHolo.py")
-        # Both cases share the same base name as one of the known application ids
+        # A pip console-script's sys.argv[0] is the generated wrapper's path, using the
+        # all-lowercase command name (e.g. ".../Scripts/eosholo.exe" or ".../bin/eosholo"),
+        # so the comparison below must be case-insensitive to still match "EoSHolo"
 def Get_Current_Running_Application_Id():
 
     Entry_Point_Base_Name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
 
     # Check every known application id for a matching entry-point file name
     for Known_Application_Id in Applications:
-        if Entry_Point_Base_Name == Known_Application_Id:
+        if Entry_Point_Base_Name.lower() == Known_Application_Id.lower():
             # Return the application id that matches the running entry point
             return Known_Application_Id
 

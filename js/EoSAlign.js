@@ -30,8 +30,9 @@
         composition: null,
         method: null,
         pressureCalibrationStudy: null, // {"Workflow Type", "Selected Pressure Calibration Study"} or null
-        selectedStudies: null,   // [{ "Study Label", "Calibration Key" }]
-        dataFrame: null,         // { columns: [...], rows: [[...]] } -- descriptive renamed columns, for CSV preview/export
+        selectedStudies: null,   // [{ "Study Label", "Calibration Key", "Study Metadata" }]
+        dataFrame: null,         // { columns: [...], rows: [[...]] } -- desktop-style display headers, for CSV preview
+        exportDataFrame: null,   // { columns: [...], rows: [[...]] } -- desktop-style CSV export headers
         rawDataFrame: null,      // { columns: [...], rows: [[...]] } -- raw Pressure_<Calibration_Key> columns, for Plot_Preview.js
         solvedPressuresDataFrame: null, // { columns: [...], rows: [[...]] } or null when Units === "Pressure (GPa)"
     };
@@ -960,13 +961,11 @@ json.dumps({
 
     // ── Step 5: Select Studies For Comparison (mirrors Select_Studies_For_Comparison.py) ──
 
-    // Tracks the custom-reference toggle's enabled state — mirrors
-    // Select_Studies_For_Comparison.py's self.Custom_Ref_Enabled. The
-    // website has no "Recalculate" workflow (multi-run was excluded from
-    // this port), so unlike the desktop there's no need to preserve this
-    // across a Refresh — Populate_Studies_For_Comparison always resets it.
+    // Track the custom-reference state and the method used for the currently
+    // rendered comparison-study list so refreshes preserve the desktop state.
     let CustomReferenceEnabled = false;
     let CustomReferenceLabel = "Reference Value";
+    let RenderedComparisonMethod = null;
 
     function Wire_Select_Studies_For_Comparison() {
         El.selectAllStudiesButton.addEventListener("click", () => {
@@ -986,19 +985,29 @@ json.dumps({
                 El.customReferenceValueInput.value = "";
                 El.customReferenceUncInput.value = "";
             }
+            Apply_Custom_Reference_To_Data();
         });
 
+        // Keep the calculation data synchronized as the user edits either
+        // custom-reference field, matching the desktop textChanged signals.
+        El.customReferenceValueInput.addEventListener("input", Apply_Custom_Reference_To_Data);
+        El.customReferenceUncInput.addEventListener("input", Apply_Custom_Reference_To_Data);
+
         El.studiesContinueButton.addEventListener("click", () => {
-            // Mirrors Send_Out_Selected_Studies_For_Comparison: apply or clear
-            // the custom reference on Data for this session only — it is
-            // never written back into the calibration YAML files.
-            const customReference = Get_Custom_Reference_Value();
-            if (customReference) {
-                State.data["custom_reference"] = customReference;
-            } else {
-                delete State.data["custom_reference"];
+            if (!State.composition || !State.method) {
+                window.alert("Missing Composition Or Method Selection");
+                return;
             }
+
             const selected = Get_Selected_Studies_For_Comparison();
+
+            // Match the desktop confirmation before continuing without any
+            // comparison studies.
+            if (!selected.length && !window.confirm("No studies are selected. Continue without studies?")) {
+                return;
+            }
+
+            Apply_Custom_Reference_To_Data();
             Continue_From_Select_Studies_For_Comparison(selected);
         });
     }
@@ -1008,8 +1017,11 @@ json.dumps({
     // the toggle, and shows the button only for non-pressure units (a
     // pressure-calibration study, not a measured-value reference, is what
     // establishes the pressure scale in the pressure-units workflow).
-    function Update_Custom_Reference_Labels() {
-        const inputVolumeUnit = (State.data && State.data["volume_unit"]) || "Å³/unit cell";
+    function Update_Custom_Reference_Labels(shouldPreserveCustomReference = false) {
+        const savedCustomReferenceEnabled = CustomReferenceEnabled;
+        const savedCustomReferenceValue = El.customReferenceValueInput.value;
+        const savedCustomReferenceUncertainty = El.customReferenceUncInput.value;
+        const inputVolumeUnit = (State.data && State.data["Volume Unit"]) || "";
         let refLabel;
         let refUnit;
         if (State.method === "XRD") {
@@ -1039,6 +1051,18 @@ json.dumps({
         El.customReferenceUncLabel.textContent = `Uncertainty (${refUnit}):`;
 
         El.customReferenceButton.hidden = State.data["Units"] === "Pressure (GPa)";
+
+        if (shouldPreserveCustomReference) {
+            CustomReferenceEnabled = savedCustomReferenceEnabled;
+            El.customReferenceValueInput.value = savedCustomReferenceValue;
+            El.customReferenceUncInput.value = savedCustomReferenceUncertainty;
+            El.customReferenceContainer.hidden = !savedCustomReferenceEnabled;
+            if (savedCustomReferenceEnabled) {
+                El.customReferenceButton.textContent = `✓ Using Custom ${refLabel}`;
+            }
+        }
+
+        Apply_Custom_Reference_To_Data();
     }
 
     // Mirrors Select_Studies_For_Comparison.py's Get_Custom_Reference_Value.
@@ -1066,16 +1090,46 @@ json.dumps({
         return { value, uncertainty, type: refType, method: State.method };
     }
 
+    // Store or clear the session-only custom reference immediately so every
+    // downstream calculation sees the current UI state.
+    function Apply_Custom_Reference_To_Data() {
+        if (!State.data) return;
+
+        const customReference = Get_Custom_Reference_Value();
+        if (customReference) {
+            State.data["custom_reference"] = customReference;
+        } else {
+            delete State.data["custom_reference"];
+        }
+    }
+
     function Get_Selected_Studies_For_Comparison() {
         const result = [];
         El.studiesCheckboxList.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
-            if (cb.checked) result.push({ "Study Label": cb.dataset.label, "Calibration Key": cb.dataset.key });
+            if (!cb.checked) return;
+
+            const calibration = State.reference.calibrations.find((candidate) => candidate.key === cb.dataset.key);
+            result.push({
+                "Study Label": cb.dataset.label,
+                "Calibration Key": cb.dataset.key,
+                "Study Metadata": calibration,
+            });
         });
         return result;
     }
 
     function Populate_Studies_For_Comparison() {
-        Update_Custom_Reference_Labels();
+        const previousSelections = new Set(
+            Array.from(El.studiesCheckboxList.querySelectorAll('input[type="checkbox"]:checked'))
+                .map((checkbox) => checkbox.dataset.key)
+        );
+        const shouldPreserveCustomReference = (
+            State.method === RenderedComparisonMethod
+            && State.method !== null
+            && State.data["Units"] !== "Pressure (GPa)"
+        );
+
+        Update_Custom_Reference_Labels(shouldPreserveCustomReference);
         El.studiesCheckboxList.innerHTML = "";
 
         // Mirrors Select_Studies_For_Comparison.py's Populate_Checkboxes: when
@@ -1102,6 +1156,8 @@ json.dumps({
             .filter((c) => c.composition === comparisonComposition && c.method === comparisonMethod && !excludeKeys.has(c.key))
             .sort((a, b) => a.study.localeCompare(b.study));
 
+        RenderedComparisonMethod = State.method;
+
         if (!studies.length) {
             const p = document.createElement("p");
             p.textContent = `No studies available for composition ${comparisonComposition} and method ${comparisonMethod}.`;
@@ -1119,6 +1175,7 @@ json.dumps({
             checkbox.id = `study-checkbox-${cal.key}`;
             checkbox.dataset.key = cal.key;
             checkbox.dataset.label = label;
+            checkbox.checked = previousSelections.has(cal.key);
             row.appendChild(checkbox);
 
             const labelEl = document.createElement("label");
@@ -1238,6 +1295,60 @@ if _df is not None and not _df.empty:
                 _rename_map[_col] = f"Pressure_{_study} | {_comp} | {_method} | {_eos} | K0 Fixed: {_k0_fixed} | cal_to: {_cal_to} | Max Pressure: {_max_p} | PTM: {_ptm}"
     _export_df = _df.rename(columns=_rename_map)
 
+    # Build the same human-readable headers shown by the desktop
+    # Data_Preview_Dialog.Populate_Table method.
+    _preview_columns = []
+    for _column_name in _df.columns:
+        if _column_name.startswith("Measured_"):
+            _preview_columns.append(_column_name.replace("Measured_", "Input: ").replace("_Input", ""))
+        elif _column_name.startswith("Input_Pressure_"):
+            _preview_columns.append("Input:\\nPressure (GPa)")
+        elif "_From_" in _column_name and not _column_name.startswith("Pressure_From_"):
+            _unit_label, _study_and_rest = _column_name.split("_From_", 1)
+            if "_(" in _study_and_rest:
+                _study, _composition_method_raw = _study_and_rest.rsplit("_(", 1)
+                _composition_method = _composition_method_raw.rstrip(")").replace("_", " / ")
+                _preview_columns.append(f"{_unit_label}\\nFrom {_study}\\n({_composition_method})")
+            else:
+                _preview_columns.append(f"{_unit_label}\\nFrom {_study_and_rest}")
+        elif _column_name.startswith("Pressure_From_") and "(" in _column_name:
+            _parts = _column_name.replace("Pressure_From_", "").split("(")
+            _study = _parts[0].strip("_")
+            _composition_method = _parts[1].rstrip(")").replace("_", " / ")
+            _preview_columns.append(f"Pressure\\nFrom {_study}\\n({_composition_method})")
+        elif _column_name.startswith("Assumed_Equal_Pressure_"):
+            _parts = _column_name.replace("Assumed_Equal_Pressure_", "").split("_=_")
+            if len(_parts) == 2:
+                _preview_columns.append(f"Assumption:\\n{_parts[0]}\\n= {_parts[1]}\\n(Pressure)")
+            else:
+                _preview_columns.append(_column_name.replace("_", " "))
+        elif _column_name.startswith("Pressure_") and not _column_name.startswith("Pressure_From_"):
+            _calibration_name = _column_name[len("Pressure_"):]
+            _metadata = Calibration_Metadata.get(_calibration_name, {})
+            _study = _metadata.get("Study", _calibration_name)
+            _preview_columns.append(f"Output:\\nPressure (GPa)\\n{_study}")
+        elif _column_name.startswith("Output: "):
+            _label = _column_name[len("Output: "):]
+            if _label.endswith("_Unc"):
+                _preview_columns.append(f"Output Unc:\\n{_label[:-4]}")
+            else:
+                _preview_columns.append(f"Output:\\n{_label}")
+        elif _column_name == "Volume_A3_UnitCell":
+            _preview_columns.append("Volume (Å³/unit cell)\\n(converted; used for calculations)")
+        elif _column_name == "Volume_A3_UnitCell_Unc":
+            _preview_columns.append("Volume Unc (Å³/unit cell)")
+        elif _column_name.startswith("Input_") and not _column_name.startswith("Input_Pressure_"):
+            if _column_name.endswith("_Unc"):
+                _original_label = _column_name[len("Input_"):-len("_Unc")].replace("_per_", "/").replace("_", " ")
+                _preview_columns.append(f"Input Unc (original):\\n{_original_label}")
+            else:
+                _original_label = _column_name[len("Input_"):].replace("_per_", "/").replace("_", " ")
+                _preview_columns.append(f"Input (original):\\n{_original_label}")
+        elif " | " in _column_name:
+            _preview_columns.append("\\n".join(_column_name.split(" | ")))
+        else:
+            _preview_columns.append(_column_name.replace("_", " "))
+
     # Build the solved-pressures subset (measured column plus every renamed pressure column)
     # whenever the input units are not already Pressure (GPa), mirroring
     # Build_Solved_Pressures_Dataframe / the "_solved_pressures.csv" export in the desktop app
@@ -1258,6 +1369,7 @@ if _df is not None and not _df.empty:
         "units_ok": _units_ok,
         "error": _err,
         "columns": list(_export_df.columns),
+        "preview_columns": _preview_columns,
         "rows": _export_df.astype(object).where(_export_df.notnull(), None).values.tolist(),
         # Raw (un-renamed) Pressure_<Calibration_Key> columns -- Plot_Preview.js hands these
         # straight to Web_Figure_Generation.Build_Dataset_From_App_Data, which looks columns
@@ -1270,7 +1382,7 @@ if _df is not None and not _df.empty:
 else:
     _result = {
         "file_ok": _file_ok, "units_ok": _units_ok, "error": _err,
-        "columns": [], "rows": [], "raw_columns": [], "raw_rows": [], "solved_columns": [], "solved_rows": [],
+        "columns": [], "preview_columns": [], "rows": [], "raw_columns": [], "raw_rows": [], "solved_columns": [], "solved_rows": [],
     }
 json.dumps(_result)
 `);
@@ -1278,13 +1390,15 @@ json.dumps(_result)
 
         if (!Result.file_ok || !Result.units_ok || !Result.rows.length) {
             State.dataFrame = null;
+            State.exportDataFrame = null;
             State.rawDataFrame = null;
             State.solvedPressuresDataFrame = null;
             El.finalActionsStatus.textContent = Result.error || "Could not compute results from the current selections.";
             return;
         }
 
-        State.dataFrame = { columns: Result.columns, rows: Result.rows };
+        State.dataFrame = { columns: Result.preview_columns, rows: Result.rows };
+        State.exportDataFrame = { columns: Result.columns, rows: Result.rows };
         State.rawDataFrame = { columns: Result.raw_columns, rows: Result.raw_rows };
         State.solvedPressuresDataFrame = Result.solved_columns.length
             ? { columns: Result.solved_columns, rows: Result.solved_rows }
@@ -1326,8 +1440,8 @@ json.dumps(_result)
     }
 
     function Export_Results_Csv() {
-        if (!State.dataFrame) return;
-        Download_Csv_File(State.dataFrame, "comparison.csv");
+        if (!State.exportDataFrame) return;
+        Download_Csv_File(State.exportDataFrame, "comparison.csv");
         // Mirrors the desktop app's "<name>_solved_pressures.csv" second file, which is
         // written right after the main CSV whenever the input units aren't already Pressure (GPa)
         if (State.solvedPressuresDataFrame) {
