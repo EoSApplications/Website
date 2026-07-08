@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /calibrant-preview/
+Disallow: /plot-preview/
+Disallow: /csv-preview/
+
+Sitemap: https://eosapplications.com/sitemap.xml

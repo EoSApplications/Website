@@ -1,0 +1,455 @@
+/* EoSAlign — mirrors EoSAlign__Step_By_Step_Layout.py's collapsible,
+   one-section-at-a-time accordion flow. */
+
+#eosalign-app {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+    box-sizing: border-box;
+}
+
+/* Several elements below set their own `display` (flex) for when they're
+   shown, which would otherwise override the browser's default
+   `[hidden] { display: none }` rule — author styles win over the UA
+   stylesheet regardless of selector specificity. This restores `hidden` so
+   EoSAlign.js can actually show/hide these via the `hidden` attribute. */
+.eosalign-sub-container[hidden],
+.eosalign-file-row[hidden],
+.eosalign-field-row[hidden],
+.eosalign-mode-buttons[hidden] {
+    display: none !important;
+}
+
+.eosalign-loading {
+    text-align: center;
+    color: var(--secondary-text);
+    padding: 3rem 0;
+}
+
+/* Interactive collapsible section — mirrors QWidget#CollapsibleSection /
+   Collapsible_Header, but actually toggleable (unlike the locked variant
+   used on the EoSApplications page). */
+.collapsible-section {
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    box-shadow: var(--subtle-shadow);
+    /* The real gap between section cards in the app is bigger than just
+       Collapsible_Sections_Layout.setSpacing(8): QWidget#CollapsibleSection
+       itself also carries its own `margin: 5px` in Collapsible_Sections.qss
+       (on every side). So between two consecutive cards: 8px layout spacing
+       + 5px bottom margin of the card above + 5px top margin of the card
+       below = 18px total. */
+    margin-bottom: 1.125rem;
+    /* Mirrors Collapsible_Content_Container's own outer
+       Collapsible_Section_Layout.setContentsMargins(8, 0, 8, 8) — both the
+       header and the content sit inset from the card's edges by this much;
+       header/content below add their own padding on top of this, exactly
+       like the nested Qt layouts do. */
+    padding: 0 0.5rem 0.5rem 0.5rem;
+    box-sizing: border-box;
+    /* No overflow:hidden here — dropdown popups inside .collapsible-content
+       are position:absolute and need to escape this card's bounds to be
+       fully visible, not get clipped to it. */
+}
+.collapsible-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    border: none;
+    background: transparent;
+    box-sizing: border-box;
+    /* Mirrors Collapsible_Header's own Header_Layout.setContentsMargins(12, 8, 12, 8) —
+       on top of .collapsible-section's 8px outer padding above. */
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    text-align: left;
+}
+.collapsible-arrow {
+    display: inline-block;
+    font-size: 1.1rem;
+    color: var(--secondary-text);
+    transition: transform 0.15s ease-in-out;
+}
+.collapsible-section.expanded .collapsible-arrow {
+    transform: rotate(90deg);
+}
+.collapsible-title {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: var(--secondary-text);
+}
+
+/* Nested collapsible sections (the Select Pressure Calibration Study
+   sub-workflow) — mirrors Nested_Collapsible_Sections.qss: a flatter card
+   tone and smaller, muted title than the top-level sections above. */
+.collapsible-section.nested {
+    background-color: var(--quaternary-background);
+    border-radius: 10px;
+    margin: 0.4rem 0;
+    box-shadow: none;
+}
+.collapsible-section.nested .collapsible-title {
+    font-size: 0.95rem;
+    color: var(--tertiary-text);
+}
+.collapsible-section.nested .collapsible-arrow {
+    font-size: 0.95rem;
+    color: var(--tertiary-text);
+}
+.collapsible-section.nested .collapsible-content {
+    max-width: none;
+}
+/* Mirrors Collapsible_Content_Container's Expanding_Content flag: the card
+   itself (.collapsible-section) always fills the available width, but most
+   sections' content keeps its own natural width instead of stretching to
+   fill the card — only Select Pressure Calibration Study and Select
+   Studies For Comparison pass Expanding_Content=True on the desktop (their
+   content — long study labels/dropdowns — actually needs the room). */
+.collapsible-content {
+    display: none;
+    box-sizing: border-box;
+    /* Mirrors Content_Row_Layout.setContentsMargins(36, 0, 0, 0) — on top of
+       .collapsible-section's 8px outer padding above (8 + 36 = 44px total
+       from the card edge), aligning content under the header's title text,
+       per the comment at Collapsible_Sections.py:488-489. No right/bottom/top
+       here — those already come from .collapsible-section's own padding. */
+    padding: 0 0 0 2.25rem;
+    max-width: 520px;
+}
+.collapsible-content.expanding-content {
+    max-width: none;
+}
+.collapsible-section.expanded .collapsible-content {
+    display: block;
+}
+
+/* Mirrors the Continue buttons' QSizePolicy.Expanding — they fill the
+   width of their (possibly natural-width-constrained) content column,
+   not necessarily the full card. */
+.full-width-button {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Form basics */
+.eosalign-sub-container {
+    display: flex;
+    flex-direction: column;
+    /* Matches the app's consistent setSpacing(8) for inner content stacks
+       (Enter_Data_Layout, List_Of_Studies_Layout, etc.). */
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+.eosalign-field-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.eosalign-field-row label {
+    flex: 0 0 auto;
+    color: var(--tertiary-text);
+    font-size: 0.9rem;
+}
+.eosalign-field-row .app-dropdown {
+    flex: 1;
+}
+.eosalign-grow {
+    flex: 1;
+}
+.eosalign-indent {
+    margin-left: 1rem;
+}
+.eosalign-sub-label {
+    color: var(--tertiary-text);
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+}
+.eosalign-custom-reference-info {
+    color: var(--tertiary-text);
+    font-size: 0.85rem;
+    white-space: pre-line;
+    margin: 0 0 0.3rem;
+}
+
+/* #custom-reference-button and #studies-continue-button sit as bare
+   children directly in .collapsible-content's plain block flow — unlike
+   every other button on the page, which gets its vertical spacing for free
+   from a surrounding .eosalign-mode-buttons (margin) or .eosalign-sub-container
+   (flex gap). Neither mechanism applies here, so without this rule these
+   two buttons render with zero space between them and their neighbors. */
+#custom-reference-button,
+#studies-continue-button {
+    margin-top: 0.5rem;
+}
+
+.app-textarea,
+.app-input {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--quaternary-background);
+    color: var(--primary-text);
+    border: 1px solid transparent;
+    border-radius: var(--corner-rounding);
+    font-family: "Noto Sans Mono", Consolas, monospace;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+}
+.app-textarea:focus,
+.app-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+.app-textarea[readonly] {
+    color: var(--tertiary-text);
+}
+
+.eosalign-file-row {
+    display: flex;
+    gap: 0.5rem;
+}
+.eosalign-file-row .app-input {
+    flex: 1;
+}
+
+.eosalign-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--tertiary-text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    width: fit-content;
+}
+.eosalign-checkbox-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin: 0;
+    border: 2px solid var(--tertiary-text);
+    border-radius: 3px;
+    background-color: transparent;
+    cursor: pointer;
+}
+.eosalign-checkbox-row input[type="checkbox"]:checked {
+    border-color: var(--primary-accent);
+    background-color: var(--primary-accent);
+}
+
+/* Buttons. Mirrors the app's QPushButton#Primary_Button/#Secondary_Button/
+   #ModeButton, all fixed at setFixedHeight(32) with 6px/12px padding
+   (Buttons.qss). box-sizing was previously left at the browser default
+   (content-box), which made padding ADD to min-height instead of being
+   included in it — every button rendered ~50% taller than the app's actual
+   32px, which is what was making the whole page feel more spread out than
+   the desktop layout. min-height (not a hard height) is used instead of an
+   exact height so the long wrapped mode-button labels (e.g. "Use a Pressure
+   Calibration Study with a Different Composition and Method") can still
+   grow to fit their wrapped text instead of clipping. */
+.primary-button,
+.secondary-button,
+.mode-button {
+    border: none;
+    border-radius: var(--corner-rounding);
+    font-weight: bold;
+    cursor: pointer;
+    box-sizing: border-box;
+    min-height: 2rem;
+    padding: 0.375rem 0.75rem;
+}
+.primary-button {
+    background-color: var(--primary-color);
+    color: var(--primary-background);
+}
+.primary-button:not(:disabled):hover {
+    background-color: var(--primary-accent);
+}
+/* Mirrors Collapsible_Sections.qss's CollapsibleSection-scoped override of
+   QPushButton#Primary_Button/#Secondary_Button:disabled (every Primary/
+   Secondary button on this page lives inside a collapsible section). */
+.primary-button:disabled {
+    background-color: var(--secondary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}
+.secondary-button {
+    background-color: var(--secondary-color);
+    color: var(--primary-background);
+}
+.secondary-button:not(:disabled):hover {
+    background-color: var(--secondary-accent);
+}
+.secondary-button:disabled {
+    background-color: var(--secondary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}
+.preview-button {
+    flex: 0 0 auto;
+    border: none;
+    border-radius: var(--corner-rounding);
+    font-weight: bold;
+    cursor: pointer;
+    box-sizing: border-box;
+    /* Matches Preview_Calibration_Button's setFixedHeight(28) — slightly smaller
+       than the other buttons' 32px, same as in the app. */
+    min-height: 1.75rem;
+    background-color: var(--tertiary-color);
+    color: var(--primary-background);
+    font-size: 0.85rem;
+    padding: 0.375rem 0.625rem;
+}
+.preview-button:not(:disabled):hover {
+    background-color: var(--tertiary-accent);
+}
+.preview-button:disabled {
+    background-color: var(--quaternary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}
+
+.eosalign-mode-buttons {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+    flex-wrap: wrap;
+}
+.eosalign-mode-buttons.eosalign-stacked {
+    flex-direction: column;
+}
+/* Mirrors QPushButton#ModeButton / #ModeButtonSecondary in
+   Collapsible_Sections.qss: ModeButton uses the Primary palette,
+   ModeButtonSecondary uses the Secondary palette. */
+.mode-button {
+    flex: 1 1 auto;
+    border-radius: 15px;
+    background-color: var(--primary-disabled);
+    color: var(--tertiary-background);
+}
+.mode-button:not(:disabled):hover {
+    background-color: var(--primary-accent);
+    color: var(--primary-background);
+}
+.mode-button.is-active {
+    background-color: var(--primary-color);
+    color: var(--secondary-background);
+}
+.mode-button.is-active:not(:disabled):hover {
+    background-color: var(--primary-accent);
+    color: var(--primary-background);
+}
+.mode-button:disabled {
+    background-color: var(--secondary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}
+
+.mode-button-secondary {
+    background-color: var(--secondary-disabled);
+}
+.mode-button-secondary:not(:disabled):hover {
+    background-color: var(--secondary-accent);
+    color: var(--primary-background);
+}
+.mode-button-secondary.is-active {
+    background-color: var(--secondary-color);
+    color: var(--secondary-background);
+}
+.mode-button-secondary.is-active:not(:disabled):hover {
+    background-color: var(--secondary-accent);
+    color: var(--primary-background);
+}
+.mode-button-secondary:disabled {
+    background-color: var(--secondary-background);
+    color: var(--quaternary-text);
+}
+
+/* Select Studies For Comparison checkboxes */
+.eosalign-study-row {
+    display: flex;
+    align-items: flex-start;
+    /* Matches Study_Option_Checkbox_Layout.setSpacing(6) /
+       .setContentsMargins(6, 4, 6, 4), and CheckboxRow's own QSS
+       border-radius: 8px (its hover-highlight rounding, distinct from the
+       card-level --corner-rounding). */
+    gap: 0.375rem;
+    padding: 0.25rem 0.375rem;
+    border-radius: 0.5rem;
+}
+.eosalign-study-row:hover {
+    background-color: var(--quaternary-background);
+}
+.eosalign-study-row input[type="checkbox"] {
+    margin-top: 0.2rem;
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 2px solid var(--tertiary-text);
+    border-radius: 3px;
+    background-color: transparent;
+    cursor: pointer;
+}
+.eosalign-study-row input[type="checkbox"]:checked {
+    border-color: var(--primary-accent);
+    background-color: var(--primary-accent);
+}
+.eosalign-study-row label {
+    flex: 1;
+    color: var(--tertiary-text);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+.eosalign-study-row .caution-asterisk {
+    color: var(--caution-text);
+}
+.eosalign-study-row .preview-button {
+    flex: 0 0 auto;
+}
+
+/* Mirrors Select_Final_Actions.py's "Plot Results" button, which is given
+   setFixedHeight(36) while Preview/Export get setFixedHeight(32) — a small
+   bump that visually marks it as the primary action of the section. */
+.primary-button-large {
+    /* Matches Plot_Results_Button's setFixedHeight(36) exactly. */
+    min-height: 2.25rem;
+    font-size: 1.05rem;
+}
+
+/* Sizes the Plot Results row to match the combined width of the Preview
+   CSV Data / Export Results row beneath it, so Plot Results spans exactly
+   as wide as those two buttons together (and sits centered between them) —
+   the outer wrapper shrinks to the widest row's natural content width
+   (the Preview/Export row), and align-items:stretch (the default for a
+   column flex container) then stretches the Plot Results row to match;
+   .eosalign-actions-fill fills that stretched row. */
+.eosalign-final-actions-buttons {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 100%;
+}
+.eosalign-final-actions-buttons .eosalign-mode-buttons {
+    margin: 0;
+}
+.eosalign-actions-fill {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* The desktop app surfaces dataframe-build errors via a popup
+   (Warning_Message) rather than inline text. The website instead shows a
+   small status caption here since there's no popup-equivalent yet — kept
+   muted/small so it doesn't read as part of the app's own layout. */
+.eosalign-status-text {
+    color: var(--tertiary-text);
+    font-size: 0.85rem;
+    margin: 0 0 0.4rem;
+    min-height: 1.1em;
+    white-space: pre-wrap;
+}

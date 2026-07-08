@@ -1,0 +1,72 @@
+/* Application banner — sits directly below the site header. Mirrors the
+   desktop app's Banner.py: a tiled star field with the app's sun/logo image
+   (clickable, acts as a per-app home/reset button) followed by the planets,
+   spaced by their real relative orbital distance. */
+
+:root {
+    --banner-height: 70px;
+}
+
+body.has-banner {
+    padding-top: calc(var(--header-height) + var(--banner-height));
+}
+
+#app-banner {
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    height: var(--banner-height);
+    z-index: 900;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 10px;
+    overflow: hidden;
+    background-color: #000000;
+    background-image: url('../images/Stars.PNG');
+    background-repeat: repeat-x;
+    background-size: auto var(--banner-height);
+}
+
+.banner-home-button {
+    flex: 0 0 auto;
+    width: 63px;
+    height: 63px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+.banner-home-button:hover {
+    transform: scale(1.08);
+}
+
+.banner .planets {
+    flex: 1 1 auto;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+.banner .spacer {
+    flex-shrink: 1;
+}
+.banner .planet {
+    flex: 0 0 auto;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+}
+.banner .planet.mercury { width: 8px;  height: 8px;  background-image: url('../images/Planets/Mercury.PNG'); }
+.banner .planet.venus   { width: 8px;  height: 8px;  background-image: url('../images/Planets/Venus.PNG'); }
+.banner .planet.earth   { width: 10px; height: 10px; background-image: url('../images/Planets/Earth.PNG'); }
+.banner .planet.mars    { width: 8px;  height: 8px;  background-image: url('../images/Planets/Mars.PNG'); }
+.banner .planet.jupiter { width: 30px; height: 30px; background-image: url('../images/Planets/Jupiter.PNG'); }
+.banner .planet.saturn  { width: 69px; height: 30px; background-image: url('../images/Planets/Saturn.PNG'); }
+.banner .planet.uranus  { width: 15px; height: 15px; background-image: url('../images/Planets/Uranus.PNG'); }
+.banner .planet.neptune { width: 15px; height: 15px; background-image: url('../images/Planets/Neptune.PNG'); }

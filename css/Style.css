@@ -1,0 +1,51 @@
+/* Shared layout variables and base page styling for every Website page.
+   Color variables (--primary-background, --primary-text, etc.) come from
+   theme.css, which is generated from Themes/Theme.py — see
+   Website_Files/Build/Generate_Theme_Css.py. Don't duplicate colors here. */
+
+:root {
+    --corner-rounding: 1rem;
+    --header-height: 10vh;
+    --footer-height: 12vh;
+
+    --subtle-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --medium-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    --strong-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+[data-theme="dark"] {
+    --subtle-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    --medium-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --strong-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    padding-top: var(--header-height);
+    font-family: "Noto Sans", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    box-sizing: border-box;
+    background-color: var(--primary-background);
+    color: var(--primary-text);
+}
+
+#main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--primary-accent);
+}

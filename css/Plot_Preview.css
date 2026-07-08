@@ -1,0 +1,88 @@
+/* Plot_Preview — displays the figures Plots/Web_Figure_Generation.py renders
+   in Pyodide (the in-browser port of the desktop Plot_Window), one card per
+   figure, each with its own light/dark theme + background save options
+   mirroring Export_Figures_Dialog.py's theme/background checkboxes. */
+
+#plot-preview-app {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem 3rem;
+    box-sizing: border-box;
+}
+
+.plot-preview-status {
+    text-align: center;
+    color: var(--secondary-text);
+    padding: 3rem 0;
+}
+.plot-preview-status.is-error {
+    color: var(--warning-color);
+}
+
+#plot-preview-figures[hidden] {
+    display: none !important;
+}
+
+.plot-card {
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    box-shadow: var(--subtle-shadow);
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+}
+.plot-card-title {
+    font-size: 1.05rem;
+    font-weight: bold;
+    color: var(--secondary-text);
+    margin: 0 0 0.75rem;
+}
+.plot-card-image-wrap {
+    width: 100%;
+    text-align: center;
+    background-color: var(--quaternary-background);
+    border-radius: var(--corner-rounding);
+    padding: 0.5rem;
+    box-sizing: border-box;
+    min-height: 120px;
+}
+.plot-card-image {
+    max-width: 100%;
+    height: auto;
+}
+.plot-card-status {
+    color: var(--tertiary-text);
+    font-size: 0.85rem;
+    margin: 0.5rem 0 0;
+}
+
+.plot-card-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+.plot-card-controls .app-dropdown {
+    flex: 1 1 160px;
+    min-width: 140px;
+}
+.plot-card-controls .primary-button {
+    flex: 0 0 auto;
+    border: none;
+    border-radius: var(--corner-rounding);
+    font-weight: bold;
+    cursor: pointer;
+    min-height: 2.2rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color);
+    color: var(--primary-background);
+}
+.plot-card-controls .primary-button:not(:disabled):hover {
+    background-color: var(--primary-accent);
+}
+.plot-card-controls .primary-button:disabled {
+    background-color: var(--secondary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}

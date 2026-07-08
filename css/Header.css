@@ -1,0 +1,132 @@
+/* Header */
+#site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    height: var(--header-height);
+    z-index: 1000;
+    display: block;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    background-color: var(--secondary-background);
+    box-shadow: var(--subtle-shadow);
+}
+
+/* Home button */
+.home-button {
+    position: absolute;
+    top: 50%;
+    left: 2%;
+    transform: translateY(-50%);
+    height: 60%;
+    aspect-ratio: 4/1;
+    -webkit-mask-image: url('../images/EoSApplications_Grey.PNG');
+    mask-image: url('../images/EoSApplications_Grey.PNG');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: left center;
+    mask-position: left center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    background-color: var(--secondary-text);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s ease-in-out;
+}
+.home-button:hover {
+    background-color: var(--primary-accent);
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* Menu toggle button */
+#menu-toggle {
+    position: absolute;
+    top: 50%;
+    right: calc(2% + 6vh);
+    transform: translateY(-50%);
+    height: 50%;
+    aspect-ratio: 1/1;
+    -webkit-mask-image: url('../images/Menu_Bars.PNG');
+    mask-image: url('../images/Menu_Bars.PNG');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    background-color: var(--secondary-text);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s ease-in-out;
+}
+#menu-toggle:hover {
+    background-color: var(--primary-accent);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Collapsible navigation menu — styled like the app's QComboBox#Dropdown
+   popup (see Dropdowns.qss / .eosholo-dropdown-list): Quaternary_Background
+   panel, rounded items, Primary_Color/Primary_Background on hover. */
+.menu {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    list-style: none;
+    margin: 0;
+    padding: 4px 8px;
+    border-radius: var(--corner-rounding);
+    background-color: var(--quaternary-background);
+    box-shadow: var(--medium-shadow);
+    max-width: 600px;
+}
+.menu.visible {
+    display: block;
+}
+.menu li {
+    position: relative;
+    margin: 0;
+    list-style: none;
+}
+.menu li a {
+    text-decoration: none;
+    display: block;
+    padding: 0.5rem 1rem;
+    margin: 4px 0;
+    border-radius: var(--corner-rounding);
+    color: var(--quaternary-text);
+    font-size: 1rem;
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+}
+.menu li a:hover {
+    background-color: var(--primary-color);
+    color: var(--primary-background);
+}
+
+/* Light/dark mode toggle button */
+#theme-toggle {
+    position: absolute;
+    top: 50%;
+    right: 2%;
+    transform: translateY(-50%);
+    height: 50%;
+    aspect-ratio: 1/1;
+    -webkit-mask-image: url('../images/LightDark_Mode.PNG');
+    mask-image: url('../images/LightDark_Mode.PNG');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    background-color: var(--secondary-text);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.25s ease-in-out;
+}
+#theme-toggle:hover {
+    background-color: var(--primary-accent);
+    transform: translateY(-50%) scale(1.1);
+}

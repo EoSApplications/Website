@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calibrant Preview</title>
+    <meta name="description" content="View details of a single equation of state calibration used by EoSAlign and EoSHolo.">
+    <meta name="robots" content="noindex">
+    <link rel="canonical" href="https://eosapplications.com/calibrant-preview/">
+
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/Fonts.css">
+    <link rel="stylesheet" href="/css/Style.css">
+    <link rel="stylesheet" href="/css/Header.css">
+    <link rel="stylesheet" href="/css/Banner.css">
+    <link rel="stylesheet" href="/css/Footer.css">
+    <link rel="stylesheet" href="/css/Dropdown.css">
+    <link rel="stylesheet" href="/css/Calibrant_Preview.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+    <link rel="icon" href="/images/EoSApplications_With_Sun.PNG" type="image/png">
+</head>
+<body>
+
+    <!-- Header is fetched from Partials/Header.html and mounted here -->
+    <div id="site-header-mount"></div>
+
+    <!-- Banner is fetched from Partials/Banner.html and mounted here -->
+    <div id="app-banner-mount"
+         data-sun-image="/images/EoSHolo_With_Sun.PNG"
+         data-app-name="EoSHolo"
+         data-home-href="/eosholo/"></div>
+
+    <main id="main-content">
+        <div id="calibrant-preview-controls" class="calibrant-preview-controls">
+            <div class="calibrant-preview-control">
+                <label id="cp-composition-dropdown-label">Composition:</label>
+                <div id="cp-composition-dropdown" aria-labelledby="cp-composition-dropdown-label"></div>
+            </div>
+            <div class="calibrant-preview-control calibrant-preview-control-grow">
+                <label id="cp-study-dropdown-label">Study:</label>
+                <div id="cp-study-dropdown" aria-labelledby="cp-study-dropdown-label"></div>
+            </div>
+        </div>
+
+        <div id="calibrant-preview" class="calibrant-preview">
+            <p>Loading…</p>
+        </div>
+    </main>
+
+    <!-- Footer is fetched from Partials/Footer.html and mounted here -->
+    <div id="site-footer-mount"></div>
+
+    <script src="/js/Header.js"></script>
+    <script src="/js/Banner.js"></script>
+    <script src="/js/Footer.js"></script>
+    <script src="/js/Dropdown_Widget.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+    <script src="/js/Calibrant_Preview.js"></script>
+</body>
+</html>

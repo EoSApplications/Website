@@ -1,0 +1,12 @@
+[
+  "Plots/Plot_All_EoS_Overlay_Absolute_Pressure_Difference.py",
+  "Plots/Plot_All_EoS_Overlay_Percent_Pressure_Difference.py",
+  "Plots/Plot_Individual_Absolute_Pressure_Difference.py",
+  "Plots/Plot_Individual_Percent_Pressure_Difference.py",
+  "Plots/Plot_Observable_Vs_Pressure.py",
+  "Plots/Plot_Pressure_Scale_Disagreement.py",
+  "Plots/Plot_Styling.py",
+  "Plots/Plot_Summary_Observable_Vs_Pressure_And_Overlay.py",
+  "Plots/Plot_Utilities.py",
+  "Plots/Web_Figure_Generation.py"
+]

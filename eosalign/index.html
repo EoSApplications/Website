@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EoSAlign</title>
+    <meta name="description" content="Convert and compare high-pressure experimental data across different equations of state calibrations, directly in your browser.">
+    <link rel="canonical" href="https://eosalign.com/">
+
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/Fonts.css">
+    <link rel="stylesheet" href="/css/Style.css">
+    <link rel="stylesheet" href="/css/Header.css">
+    <link rel="stylesheet" href="/css/Banner.css">
+    <link rel="stylesheet" href="/css/Footer.css">
+    <link rel="stylesheet" href="/css/Dropdown.css">
+    <link rel="stylesheet" href="/css/EoSAlign.css">
+    <link rel="icon" href="/images/EoSAlign_With_Sun.PNG" type="image/png">
+</head>
+<body>
+
+    <!-- Header is fetched from Partials/Header.html and mounted here -->
+    <div id="site-header-mount"></div>
+
+    <!-- Banner is fetched from Partials/Banner.html and mounted here -->
+    <div id="app-banner-mount"
+         data-sun-image="/images/EoSAlign_With_Sun.PNG"
+         data-app-name="EoSAlign"
+         data-home-href="/eosalign/"></div>
+
+    <main id="main-content">
+        <div id="eosalign-app">
+
+            <div id="eosalign-loading" class="eosalign-loading">
+                <p id="eosalign-loading-message">Loading Python runtime…</p>
+            </div>
+
+            <div id="eosalign-sections" hidden>
+
+                <!-- Step 1: Enter Data -->
+                <section class="collapsible-section" id="section-enter-data" data-step="enter-data">
+                    <button type="button" class="collapsible-header" data-toggle>
+                        <span class="collapsible-arrow">&#9654;</span>
+                        <span class="collapsible-title">Enter Data</span>
+                    </button>
+                    <div class="collapsible-content">
+                        <div class="eosalign-mode-buttons">
+                            <button type="button" class="mode-button" id="manual-entry-button">Manual Entry</button>
+                            <button type="button" class="mode-button" id="upload-file-button">Upload File</button>
+                        </div>
+
+                        <div id="enter-data-body" class="eosalign-sub-container" hidden>
+                            <textarea id="manual-entry-textbox" class="app-textarea" rows="5"
+                                placeholder="Enter your values here (one per line or comma/space separated)..." hidden></textarea>
+
+                            <div id="upload-file-row" class="eosalign-file-row" hidden>
+                                <input type="text" id="upload-file-path" class="app-input" placeholder="Drop file here or choose a file...">
+                                <input type="file" id="upload-file-input" accept=".txt,.csv,.dat" hidden>
+                                <button type="button" class="secondary-button" id="upload-file-browse-button">Browse</button>
+                            </div>
+                            <textarea id="file-preview-textbox" class="app-textarea" rows="5" readonly
+                                placeholder="File contents will appear here after a file is selected" hidden></textarea>
+
+                            <div class="eosalign-field-row">
+                                <label for="units-dropdown">Units:</label>
+                                <div class="app-dropdown" id="units-dropdown"></div>
+                            </div>
+                            <div class="eosalign-field-row" id="volume-units-row" hidden>
+                                <label for="volume-units-dropdown">Volume Units:</label>
+                                <div class="app-dropdown" id="volume-units-dropdown"></div>
+                            </div>
+
+                            <label class="eosalign-checkbox-row">
+                                <input type="checkbox" id="error-propagation-checkbox">
+                                <span>Enable Error Propagation</span>
+                            </label>
+
+                            <div id="enter-uncertainty-body" class="eosalign-sub-container" hidden>
+                                <p class="eosalign-sub-label">Enter Measurement Uncertainties:</p>
+                                <textarea id="uncertainty-manual-textbox" class="app-textarea" rows="3"
+                                    placeholder="Enter uncertainty values here (one per line or comma/space separated)..." hidden></textarea>
+                                <div id="uncertainty-upload-row" class="eosalign-file-row" hidden>
+                                    <input type="text" id="uncertainty-upload-file-path" class="app-input" placeholder="Drop file here or choose a file...">
+                                    <input type="file" id="uncertainty-upload-file-input" accept=".txt,.csv,.dat" hidden>
+                                    <button type="button" class="secondary-button" id="uncertainty-upload-browse-button">Browse</button>
+                                </div>
+                                <textarea id="uncertainty-file-preview-textbox" class="app-textarea" rows="3" readonly
+                                    placeholder="File contents will appear here after a file is selected" hidden></textarea>
+                            </div>
+
+                            <button type="button" class="primary-button full-width-button" id="enter-data-continue-button">Continue</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Step 2: Select Composition -->
+                <section class="collapsible-section" id="section-select-composition" data-step="select-composition" hidden>
+                    <button type="button" class="collapsible-header" data-toggle>
+                        <span class="collapsible-arrow">&#9654;</span>
+                        <span class="collapsible-title">Select Composition</span>
+                    </button>
+                    <div class="collapsible-content">
+                        <div class="eosalign-field-row">
+                            <label for="composition-dropdown">Select Composition:</label>
+                            <div class="app-dropdown" id="composition-dropdown"></div>
+                        </div>
+                        <button type="button" class="primary-button full-width-button" id="composition-continue-button">Continue</button>
+                    </div>
+                </section>
+
+                <!-- Step 3: Select Method (skipped automatically for non-pressure units) -->
+                <section class="collapsible-section" id="section-select-method" data-step="select-method" hidden>
+                    <button type="button" class="collapsible-header" data-toggle>
+                        <span class="collapsible-arrow">&#9654;</span>
+                        <span class="collapsible-title">Select Method</span>
+                    </button>
+                    <div class="collapsible-content">
+                        <div class="eosalign-field-row">
+                            <label for="method-dropdown">Select Method:</label>
+                            <div class="app-dropdown" id="method-dropdown"></div>
+                        </div>
+                        <button type="button" class="primary-button full-width-button" id="method-continue-button">Continue</button>
+                    </div>
+                </section>
+
+                <!-- Step 4: Select Pressure Calibration Study (pressure units only) -->
+                <section class="collapsible-section" id="section-pressure-calibration" data-step="pressure-calibration" hidden>
+                    <button type="button" class="collapsible-header" data-toggle>
+                        <span class="collapsible-arrow">&#9654;</span>
+                        <span class="collapsible-title">Select Pressure Calibration Study</span>
+                    </button>
+                    <div class="collapsible-content expanding-content">
+                        <p class="eosalign-sub-label">Select a Pressure Calibration Study:</p>
+                        <div class="eosalign-field-row eosalign-indent">
+                            <div class="app-dropdown eosalign-grow" id="pressure-calibration-dropdown"></div>
+                            <button type="button" class="preview-button" id="pressure-calibration-preview-button" disabled>Preview Calibrant</button>
+                        </div>
+
+                        <div class="eosalign-mode-buttons eosalign-stacked">
+                            <button type="button" class="mode-button" id="use-original-button" disabled>Use a Pressure Calibration Study with the Original Composition and Method</button>
+                            <button type="button" class="mode-button mode-button-secondary" id="use-different-button" disabled>Use a Pressure Calibration Study with a Different Composition and Method</button>
+                        </div>
+
+                        <!-- Nested sub-sections (Select A Different Composition / Method /
+                             Pressure Calibration Study) are built dynamically by EoSAlign.js,
+                             mirroring Select_Pressure_Calibration_Study.py's Add_Workflow_Section /
+                             Clear_Upcoming_Collapsible_Sections. -->
+                        <div id="pressure-calibration-different-workflow"></div>
+                    </div>
+                </section>
+
+                <!-- Step 5: Select Studies For Comparison -->
+                <section class="collapsible-section" id="section-select-studies" data-step="select-studies" hidden>
+                    <button type="button" class="collapsible-header" data-toggle>
+                        <span class="collapsible-arrow">&#9654;</span>
+                        <span class="collapsible-title">Select Studies For Comparison</span>
+                    </button>
+                    <div class="collapsible-content expanding-content">
+                        <div class="eosalign-mode-buttons">
+                            <button type="button" class="primary-button" id="select-all-studies-button">Select All</button>
+                            <button type="button" class="secondary-button" id="deselect-all-studies-button">Deselect All</button>
+                        </div>
+                        <div id="studies-checkbox-list" class="eosalign-sub-container"></div>
+
+                        <!-- Custom reference override (mirrors Select_Studies_For_Comparison.py's
+                             "Use Custom V0/λ0/ν0" toggle) — only shown for non-pressure units, where
+                             a comparison study's own published reference value can be overridden
+                             with the user's own measured value before forward-converting pressure. -->
+                        <button type="button" class="secondary-button full-width-button" id="custom-reference-button" hidden>Use Custom Reference Value</button>
+                        <div id="custom-reference-container" class="eosalign-sub-container" hidden>
+                            <p class="eosalign-custom-reference-info" id="custom-reference-info"></p>
+                            <div class="eosalign-field-row">
+                                <label for="custom-reference-value-input" id="custom-reference-value-label">Reference Value:</label>
+                                <input type="text" id="custom-reference-value-input" class="app-input" placeholder="Enter value...">
+                            </div>
+                            <div class="eosalign-field-row">
+                                <label for="custom-reference-unc-input" id="custom-reference-unc-label">Uncertainty:</label>
+                                <input type="text" id="custom-reference-unc-input" class="app-input" placeholder="Enter uncertainty (optional)...">
+                            </div>
+                        </div>
+
+                        <button type="button" class="primary-button full-width-button" id="studies-continue-button">Continue</button>
+                    </div>
+                </section>
+
+                <!-- Step 6: Final Actions -->
+                <section class="collapsible-section" id="section-final-actions" data-step="final-actions" hidden>
+                    <button type="button" class="collapsible-header" data-toggle>
+                        <span class="collapsible-arrow">&#9654;</span>
+                        <span class="collapsible-title">Final Actions</span>
+                    </button>
+                    <div class="collapsible-content">
+                        <p id="final-actions-status" class="eosalign-status-text"></p>
+                        <div class="eosalign-final-actions-buttons">
+                            <div class="eosalign-mode-buttons">
+                                <button type="button" class="primary-button primary-button-large eosalign-actions-fill" id="plot-results-button" disabled>Plot Results</button>
+                            </div>
+                            <div class="eosalign-mode-buttons">
+                                <button type="button" class="primary-button" id="preview-csv-button" disabled>Preview CSV Data</button>
+                                <button type="button" class="primary-button" id="export-results-button" disabled>Export Results</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer is fetched from Partials/Footer.html and mounted here -->
+    <div id="site-footer-mount"></div>
+
+    <script src="/js/Header.js"></script>
+    <script src="/js/Banner.js"></script>
+    <script src="/js/Footer.js"></script>
+    <script src="/js/Dropdown_Widget.js"></script>
+    <script src="/js/Pyodide_Bootstrap.js"></script>
+    <script src="/js/EoSAlign.js"></script>
+</body>
+</html>

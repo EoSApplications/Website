@@ -1,0 +1,279 @@
+/* EoSHolo — mirrors EoSHolo.py's controls bar + CalibrationGraphView */
+
+/* Several elements below set their own `display` (flex/block) for when
+   they're shown, which would otherwise override the browser's default
+   `[hidden] { display: none }` rule — author styles win over the UA
+   stylesheet regardless of selector specificity. This restores `hidden`
+   so EoSHolo.js can actually show/hide these via the `hidden` attribute. */
+#eosholo-loading[hidden],
+#eosholo-controls[hidden],
+#eosholo-graph-container[hidden],
+.eosholo-node-panel[hidden] {
+    display: none !important;
+}
+
+/* The graph only has to account for the fixed header/banner above it, not the
+   footer below -- it's given at least a full viewport's worth of height minus
+   header+banner, which is normally taller than the space actually left in the
+   first screen (since the footer would otherwise share that space), so the
+   page grows past 100vh and becomes scrollable, with the footer pushed just
+   below the graph instead of being squeezed into the same screen. */
+#main-content {
+    min-height: 0;
+}
+
+#eosholo-app {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - var(--header-height) - var(--banner-height));
+}
+
+/* Loading overlay */
+.eosholo-loading {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--secondary-text);
+    font-size: 1.1rem;
+}
+
+/* Controls bar */
+.eosholo-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--secondary-background);
+}
+.eosholo-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.eosholo-control-grow {
+    flex: 1 1 240px;
+}
+.eosholo-controls label {
+    font-size: 0.85rem;
+    color: var(--tertiary-text);
+}
+/* Dropdown styling now lives in Assets/css/Dropdown.css (shared with the
+   EoSAlign page). */
+.eosholo-primary-button,
+.eosholo-preview-button {
+    border: none;
+    border-radius: var(--corner-rounding);
+    font-weight: bold;
+    cursor: pointer;
+    align-self: flex-end;
+}
+.eosholo-primary-button {
+    font-size: 0.9rem;
+    padding: 0.45rem 1rem;
+    min-height: 2rem;
+    background-color: var(--primary-color);
+    color: var(--primary-background);
+}
+.eosholo-primary-button:hover {
+    background-color: var(--primary-accent);
+}
+
+/* Mirrors QPushButton#Preview_Calibration_Button in Buttons.qss. */
+.eosholo-preview-button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.65rem;
+    background-color: var(--tertiary-color);
+    color: var(--primary-background);
+}
+.eosholo-preview-button:not(:disabled):hover {
+    background-color: var(--tertiary-accent);
+}
+.eosholo-preview-button:disabled {
+    background-color: var(--quaternary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}
+
+.eosholo-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--corner-rounding);
+    color: var(--tertiary-text);
+    font-size: 0.9rem;
+    cursor: pointer;
+    align-self: flex-end;
+}
+.eosholo-checkbox-row:hover {
+    background-color: var(--primary-accent);
+    color: var(--primary-background);
+}
+.eosholo-checkbox-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin: 0;
+    border: 2px solid var(--tertiary-text);
+    border-radius: 3px;
+    background-color: transparent;
+    cursor: pointer;
+}
+.eosholo-checkbox-row input[type="checkbox"]:checked {
+    border-color: var(--primary-accent);
+    background-color: var(--primary-accent);
+}
+.eosholo-checkbox-row:hover input[type="checkbox"] {
+    border-color: var(--primary-background);
+}
+.eosholo-checkbox-row:hover input[type="checkbox"]:checked {
+    border-color: var(--primary-background);
+    background-color: var(--primary-background);
+}
+
+/* Graph view */
+.eosholo-graph-container {
+    flex: 1;
+    position: relative;
+    min-height: 0;
+    background-color: var(--primary-background);
+    overflow: hidden;
+}
+#eosholo-graph-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+}
+#eosholo-graph-canvas.dragging {
+    cursor: grabbing;
+}
+
+/* Node info / focus panel — mirrors Build_Node_Info_Popup / EoSHolo_Node_Popup.qss */
+.eosholo-node-panel {
+    position: absolute;
+    z-index: 950;
+    width: 320px;
+    max-height: 400px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--secondary-background);
+    color: var(--primary-text);
+    border-radius: var(--corner-rounding);
+    box-shadow: 0 3px 22px rgba(0, 0, 0, 0.43);
+    padding: 0.5rem;
+    box-sizing: border-box;
+    font-size: 0.85rem;
+}
+
+.eosholo-node-panel-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 0 0 auto;
+}
+.eosholo-node-panel-title {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    background-color: var(--tertiary-background);
+    color: var(--secondary-text);
+    font-size: 0.95rem;
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 0.25rem 0.5rem;
+}
+.eosholo-node-panel-preview-button {
+    flex: 0 0 auto;
+    border: none;
+    border-radius: var(--corner-rounding);
+    background-color: var(--tertiary-color);
+    color: var(--primary-background);
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+}
+.eosholo-node-panel-preview-button:hover:not(:disabled) {
+    background-color: var(--tertiary-accent);
+}
+.eosholo-node-panel-preview-button:disabled {
+    background-color: var(--quaternary-background);
+    color: var(--quaternary-text);
+    cursor: default;
+}
+.eosholo-node-panel-close-button {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 14px;
+    background-color: var(--quinary-background);
+    color: var(--secondary-text);
+    font-size: 1rem;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+}
+.eosholo-node-panel-close-button:hover {
+    background-color: var(--warning-color);
+    color: var(--primary-background);
+}
+
+.eosholo-node-panel-divider {
+    flex: 0 0 auto;
+    height: 1px;
+    margin: 0.3rem 0.5rem;
+    background-color: var(--secondary-text);
+}
+
+.eosholo-node-panel-fields {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 0.75rem;
+    row-gap: 0.2rem;
+    padding: 0.5rem;
+}
+.eosholo-node-panel-key {
+    color: var(--tertiary-text);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.eosholo-node-panel-value {
+    color: var(--tertiary-text);
+    font-size: 0.8rem;
+    overflow-wrap: break-word;
+}
+
+.eosholo-node-panel-actions {
+    flex: 0 0 auto;
+    display: flex;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+}
+.eosholo-node-panel-action-button {
+    flex: 1;
+    border: none;
+    border-radius: var(--corner-rounding);
+    background-color: var(--secondary-color);
+    color: var(--primary-background);
+    font-size: 0.85rem;
+    font-weight: bold;
+    padding: 0.4rem 0.6rem;
+    cursor: pointer;
+}
+.eosholo-node-panel-action-button:hover {
+    background-color: var(--secondary-accent);
+}
+

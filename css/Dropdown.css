@@ -1,0 +1,85 @@
+/* Shared custom dropdown — a real <select>'s open popup can't be restyled
+   (hover colors, multi-line wrapping) in most browsers, which is exactly why
+   the desktop app uses a custom WordWrapDelegate for its dropdowns. This is
+   a styled button + an absolutely-positioned, fully-CSS'd option list,
+   matching QComboBox#Dropdown's QSS. Built/populated by
+   Make_Dropdown_Widget in Dropdown_Widget.js. Used on the EoSHolo and
+   EoSAlign pages. */
+.app-dropdown {
+    position: relative;
+    /* Flex items default to min-width:auto, which stops them shrinking
+       below their content's natural size — that's what was defeating the
+       ellipsis truncation below whenever this dropdown sat inside another
+       flex row (e.g. a field row with the dropdown set to flex:1). */
+    min-width: 0;
+}
+.app-dropdown-button {
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    background-color: var(--quaternary-background);
+    color: var(--quaternary-text);
+    border: 1px solid transparent;
+    border-radius: var(--corner-rounding);
+    font-size: 0.95rem;
+    padding: 0.4rem 0.75rem;
+    min-height: 2rem;
+    cursor: pointer;
+    text-align: left;
+}
+.app-dropdown.is-placeholder .app-dropdown-button-text {
+    opacity: 0.7;
+}
+.app-dropdown-button-text {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.app-dropdown-button::after {
+    content: "";
+    flex: 0 0 auto;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--quaternary-text);
+}
+.app-dropdown-button:disabled {
+    cursor: default;
+    opacity: 0.6;
+}
+.app-dropdown-list {
+    position: absolute;
+    z-index: 1000;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 320px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 4px 8px;
+    list-style: none;
+    background-color: var(--quaternary-background);
+    border-radius: var(--corner-rounding);
+    box-shadow: var(--strong-shadow);
+}
+.app-dropdown-list li {
+    padding: 0.5rem 0.75rem;
+    margin: 4px 0;
+    border-radius: var(--corner-rounding);
+    color: var(--quaternary-text);
+    white-space: normal;
+    overflow-wrap: break-word;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+.app-dropdown-list li:hover,
+.app-dropdown-list li[aria-selected="true"] {
+    background-color: var(--primary-color);
+    color: var(--primary-background);
+}

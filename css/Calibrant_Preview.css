@@ -1,0 +1,129 @@
+/* Calibrant Preview — read-only "view mode" rendering of one calibration,
+   mirrors View_Edit_And_Save_Calibration_Files_In_A_New_Window.py's view-mode form:
+   CollapsibleSection-style cards, CollapsibleContentLabel field labels, and
+   LineEdit/TextEdit-style boxes for the values themselves. */
+
+.calibrant-preview {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 0 1.5rem 3rem;
+}
+
+/* Composition/Study selectors — mirrors EoSHolo's controls bar
+   (.eosholo-controls) and View_Edit_And_Save_Calibration_Files_In_A_New_Window.py's
+   Build_Calibration_Selector, so a visitor can browse to any calibration
+   from here instead of only arriving via a "Preview Calibrant" button. */
+.calibrant-preview-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.75rem;
+    max-width: 800px;
+    margin: 2rem auto 1.5rem;
+    padding: 0.75rem 1.5rem;
+}
+.calibrant-preview-control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 220px;
+}
+.calibrant-preview-control-grow {
+    flex: 1 1 240px;
+}
+.calibrant-preview-controls label {
+    font-size: 0.85rem;
+    color: var(--tertiary-text);
+}
+
+.calibrant-preview h1 {
+    margin-bottom: 0.25rem;
+    color: var(--primary-text);
+}
+.calibrant-preview-subtitle {
+    color: var(--quaternary-text);
+    margin-top: 0;
+}
+
+/* Mirrors QWidget#CollapsibleSection. */
+.calibrant-preview-section {
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    padding: 0.5rem 1rem 1rem;
+    margin-bottom: 1rem;
+}
+/* Mirrors QLabel#CollapsibleTitle. */
+.calibrant-preview-section summary {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: var(--secondary-text);
+    padding: 0.5rem 0;
+}
+
+.calibrant-preview-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    column-gap: 1rem;
+    row-gap: 0.6rem;
+    margin-top: 0.5rem;
+    align-items: start;
+}
+/* Mirrors QLabel#CollapsibleContentLabel. */
+.calibrant-preview-key {
+    color: var(--tertiary-text);
+    font-weight: bold;
+    padding-top: 0.45rem;
+}
+
+/* Value cell holds the LineEdit/TextEdit-style box plus an optional unit
+   label to its right — mirrors Unit_Line_Edit (e.g. "GPa" next to Maximum
+   Pressure, "Å³/unit cell" next to V0). */
+.calibrant-preview-value-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Mirrors QLineEdit#LineEdit / QTextEdit#TextEdit (the read-only display box
+   every field value sits in, including DOI links and the rendered equation). */
+.calibrant-preview-value {
+    flex: 1;
+    min-width: 0;
+    background-color: var(--quaternary-background);
+    color: var(--primary-text);
+    border-radius: var(--corner-rounding);
+    font-family: "Noto Sans Mono", Consolas, monospace;
+    font-size: 0.9rem;
+    padding: 0.5rem 0.75rem;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+}
+.calibrant-preview-value a {
+    color: var(--tertiary-color);
+}
+.calibrant-preview-equation {
+    overflow-x: auto;
+}
+
+/* Mirrors Unit_Line_Edit's adjacent QLabel#CollapsibleContentLabel. */
+.calibrant-preview-unit {
+    flex: 0 0 auto;
+    color: var(--tertiary-text);
+    white-space: nowrap;
+}
+
+/* Mirrors the nested QWidget#CollapsibleSection used by each
+   Reference_Entry inside the References_Panel. */
+.calibrant-preview-reference {
+    background-color: var(--quaternary-background);
+    border-radius: 10px;
+    margin: 0.5rem 0;
+    padding: 0.5rem 0.75rem 0.75rem;
+}
+.calibrant-preview-reference h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: bold;
+    color: var(--tertiary-text);
+}

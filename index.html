@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EoSApplications</title>
+    <meta name="description" content="EoSApplications is a suite of free tools for working with high-pressure equation of state (EoS) calibrations, including EoSAlign and EoSHolo.">
+    <link rel="canonical" href="https://eosapplications.com/">
+
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/Fonts.css">
+    <link rel="stylesheet" href="/css/Style.css">
+    <link rel="stylesheet" href="/css/Header.css">
+    <link rel="stylesheet" href="/css/Banner.css">
+    <link rel="stylesheet" href="/css/Footer.css">
+    <link rel="stylesheet" href="/css/EoSApplications.css">
+    <link rel="icon" href="/images/EoSApplications_With_Sun.PNG" type="image/png">
+</head>
+<body>
+
+    <!-- Header is fetched from Partials/Header.html and mounted here -->
+    <div id="site-header-mount"></div>
+
+    <!-- Banner is fetched from Partials/Banner.html and mounted here -->
+    <div id="app-banner-mount"
+         data-sun-image="/images/EoSApplications_With_Sun.PNG"
+         data-app-name="EoSApplications"
+         data-home-href="/"></div>
+
+    <main id="main-content">
+        <section id="application-launcher">
+            <div class="application-card-container">
+                <a class="application-card" href="/eosalign/">
+                    <img class="application-card-logo" src="/images/EoSAlign_With_Sun.PNG" alt="EoSAlign">
+                    <p class="application-card-description">Convert and compare high-pressure experimental data across different equations of state calibrations.</p>
+                </a>
+                <a class="application-card" href="/eosholo/">
+                    <img class="application-card-logo" src="/images/EoSHolo_With_Sun.PNG" alt="EoSHolo">
+                    <p class="application-card-description">Explore the network of equation of state calibrations as an interactive graph.</p>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer is fetched from Partials/Footer.html and mounted here -->
+    <div id="site-footer-mount"></div>
+
+    <script src="/js/Header.js"></script>
+    <script src="/js/Banner.js"></script>
+    <script src="/js/Footer.js"></script>
+</body>
+</html>

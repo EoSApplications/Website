@@ -1,0 +1,52 @@
+/* Footer */
+#site-footer {
+    width: 100%;
+    max-width: 100%;
+    min-height: var(--footer-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding: 1rem 0;
+    box-sizing: border-box;
+    background-color: var(--secondary-background);
+    box-shadow: var(--subtle-shadow);
+}
+
+#site-footer .github-link {
+    display: inline-flex;
+}
+
+#site-footer .github-button {
+    height: 4vh;
+    width: 4vh;
+    min-width: 10px;
+    min-height: 10px;
+    -webkit-mask-image: url('../images/GitHub_Logo.PNG');
+    mask-image: url('../images/GitHub_Logo.PNG');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    background-color: var(--quaternary-text);
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s ease-in-out;
+}
+#site-footer .github-button:hover {
+    background-color: var(--primary-accent);
+    transform: scale(1.1);
+}
+
+#site-footer .copyright-label {
+    width: 100%;
+    text-align: center;
+    font-size: small;
+    color: var(--quaternary-text);
+    margin: 0;
+    line-height: 1.4;
+}

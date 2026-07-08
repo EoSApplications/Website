@@ -1,0 +1,84 @@
+/* About EoSApplications page (Pages/About.html) */
+
+#about-content {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 2rem;
+}
+
+#about-content h1 {
+    margin-bottom: 0.25rem;
+}
+
+#about-content .about-subtitle {
+    color: var(--quaternary-text);
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+
+#about-content section {
+    margin-bottom: 2rem;
+}
+
+#about-content h2 {
+    border-bottom: 1px solid var(--quinary-background);
+    padding-bottom: 0.4rem;
+}
+
+.about-app-summaries {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+.about-app-summary {
+    flex: 1 1 280px;
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    padding: 1.25rem;
+}
+.about-app-summary h3 {
+    margin-top: 0;
+}
+
+.calibrations-table-wrapper {
+    max-height: 480px;
+    overflow: auto;
+    border-radius: var(--corner-rounding);
+}
+
+table.calibrations-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+table.calibrations-table th,
+table.calibrations-table td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--quinary-background);
+    vertical-align: top;
+}
+table.calibrations-table thead th {
+    position: sticky;
+    top: 0;
+    background-color: var(--secondary-background);
+}
+table.calibrations-table tbody tr:hover {
+    background-color: var(--quaternary-background);
+}
+
+.about-contact-list,
+.about-authors-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.about-contact-list li,
+.about-authors-list li {
+    margin-bottom: 0.4rem;
+}
+
+.about-copyright {
+    color: var(--quaternary-text);
+    font-size: 0.85rem;
+}

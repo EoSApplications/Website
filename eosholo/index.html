@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EoSHolo</title>
+    <meta name="description" content="Explore the network of high-pressure equation of state calibrations as an interactive graph, directly in your browser.">
+    <link rel="canonical" href="https://eosholo.com/">
+
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/Fonts.css">
+    <link rel="stylesheet" href="/css/Style.css">
+    <link rel="stylesheet" href="/css/Header.css">
+    <link rel="stylesheet" href="/css/Banner.css">
+    <link rel="stylesheet" href="/css/Footer.css">
+    <link rel="stylesheet" href="/css/Dropdown.css">
+    <link rel="stylesheet" href="/css/EoSHolo.css">
+    <link rel="icon" href="/images/EoSHolo_With_Sun.PNG" type="image/png">
+</head>
+<body>
+
+    <!-- Header is fetched from Partials/Header.html and mounted here -->
+    <div id="site-header-mount"></div>
+
+    <!-- Banner is fetched from Partials/Banner.html and mounted here -->
+    <div id="app-banner-mount"
+         data-sun-image="/images/EoSHolo_With_Sun.PNG"
+         data-app-name="EoSHolo"
+         data-home-href="/eosholo/"></div>
+
+    <main id="main-content">
+        <div id="eosholo-app">
+
+            <!-- Loading overlay, shown until the static calibration graph loads -->
+            <div id="eosholo-loading" class="eosholo-loading">
+                <p id="eosholo-loading-message">Loading calibration network…</p>
+            </div>
+
+            <!-- Controls bar -->
+            <div id="eosholo-controls" class="eosholo-controls" hidden>
+                <div class="eosholo-control">
+                    <label id="composition-dropdown-label">Composition:</label>
+                    <div id="composition-dropdown" aria-labelledby="composition-dropdown-label"></div>
+                </div>
+
+                <div class="eosholo-control eosholo-control-grow">
+                    <label id="study-dropdown-label">Study:</label>
+                    <div id="study-dropdown" aria-labelledby="study-dropdown-label"></div>
+                </div>
+
+                <button id="preview-calibrant-button" class="eosholo-preview-button" disabled title="Select a study to preview its details.">Preview Calibrant</button>
+                <button id="reset-zoom-button" class="eosholo-primary-button">Reset Zoom</button>
+
+                <label class="eosholo-checkbox-row" id="show-all-row">
+                    <input type="checkbox" id="show-all-checkbox" checked>
+                    <span>Show All Nodes</span>
+                </label>
+            </div>
+
+            <!-- Graph view -->
+            <div id="eosholo-graph-container" class="eosholo-graph-container" hidden>
+                <canvas id="eosholo-graph-canvas"></canvas>
+            </div>
+
+            <!-- Node info / focus panel, positioned next to the right-clicked node -->
+            <div id="eosholo-node-panel" class="eosholo-node-panel" hidden></div>
+
+        </div>
+    </main>
+
+    <!-- Footer is fetched from Partials/Footer.html and mounted here -->
+    <div id="site-footer-mount"></div>
+
+    <script src="/js/Header.js"></script>
+    <script src="/js/Banner.js"></script>
+    <script src="/js/Footer.js"></script>
+    <script src="/js/Dropdown_Widget.js"></script>
+    <script src="/js/EoSHolo.js"></script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+/* Download and install page (Pages/Download.html) */
+
+#download-content {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 1.5rem 2rem;
+}
+
+#download-content h1 {
+    margin-bottom: 0.25rem;
+}
+
+#download-content .download-subtitle {
+    color: var(--quaternary-text);
+    margin-top: 0;
+    margin-bottom: 2rem;
+}
+
+#download-content section {
+    margin-bottom: 2rem;
+}
+
+#download-content h2 {
+    border-bottom: 1px solid var(--quinary-background);
+    padding-bottom: 0.4rem;
+}
+
+/* Cards for the three desktop platform download buttons */
+.download-platform-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.download-platform-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 160px;
+    padding: 0.85rem 1.25rem;
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    border: 1px solid var(--quinary-background);
+    color: var(--primary-text);
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    box-shadow: var(--subtle-shadow);
+}
+
+.download-platform-card:hover {
+    background-color: var(--tertiary-background);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+}
+
+/* Note shown while releases are not yet published */
+.download-note {
+    color: var(--quaternary-text);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+/* pip install command block */
+.pip-install-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    border: 1px solid var(--quinary-background);
+    padding: 0.85rem 1.25rem;
+    margin: 1rem 0;
+    box-shadow: var(--subtle-shadow);
+}
+
+.pip-install-block code {
+    font-family: "Noto Sans Mono", "Courier New", monospace;
+    font-size: 1rem;
+    color: var(--primary-text);
+    flex: 1;
+}
+
+/* Individual terminal command blocks (launch commands, sub-commands) */
+.command-block {
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    border: 1px solid var(--quinary-background);
+    padding: 0.6rem 1.25rem;
+    margin: 0.4rem 0;
+    box-shadow: var(--subtle-shadow);
+}
+
+.command-block code {
+    font-family: "Noto Sans Mono", "Courier New", monospace;
+    font-size: 0.9rem;
+    color: var(--primary-text);
+}
+
+/* GitHub source-code link button */
+.github-source-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    background-color: var(--secondary-background);
+    border-radius: var(--corner-rounding);
+    border: 1px solid var(--quinary-background);
+    color: var(--primary-text);
+    font-weight: bold;
+    box-shadow: var(--subtle-shadow);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+    margin-top: 0.5rem;
+}
+
+.github-source-link:hover {
+    background-color: var(--tertiary-background);
+    border-color: var(--primary-color);
+    color: var(--primary-text);
+}
