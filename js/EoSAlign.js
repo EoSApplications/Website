@@ -1422,7 +1422,16 @@ json.dumps(_result)
 
     function Preview_Csv() {
         if (!State.dataFrame) return;
-        sessionStorage.setItem("eosalign_dataframe", JSON.stringify(State.dataFrame));
+        // Hand off both the short-label preview dataframe (for on-screen display) and the
+        // long-label export dataframe + solved-pressures companion (for the preview page's own
+        // Download button), mirroring the desktop app's Data_Preview_Dialog: the table shows
+        // short labels, but its Export button always rebuilds long labels regardless of what's
+        // currently on screen.
+        sessionStorage.setItem("eosalign_dataframe", JSON.stringify({
+            preview: State.dataFrame,
+            export: State.exportDataFrame,
+            solved: State.solvedPressuresDataFrame,
+        }));
         window.open("/csv-preview/", "_blank");
     }
 

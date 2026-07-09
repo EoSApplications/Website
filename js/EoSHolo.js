@@ -892,10 +892,10 @@
             }
         }
 
-        // ── X is always the same deterministic per-node jitter (or column
-        // center for narrow columns); Y is whatever was just computed above,
-        // or the user's last dragged Y if they've moved this node. Both are
-        // then clamped fully inside the node's composition column. ──
+        // ── If the user has dragged a node, both X and Y persist as-is.
+        // Otherwise X falls back to a deterministic per-node jitter (or
+        // column center for narrow columns) and Y to the computed layout.
+        // Both are then clamped fully inside the node's composition column. ──
         const positions = new Map();
         for (const nodeId of visibleIds) {
             const node = State.lookup.get(nodeId);
@@ -909,20 +909,27 @@
             const labelWidth = ctx2d.measureText(labelText).width;
             const box = Node_Bounding_Box(radius, labelWidth, nodeLabelPixelHeight);
 
-            let x = (bounds.left + bounds.right) / 2;
-            const nodeWidth = Math.max(1, radius * 2);
-            const colW = Math.max(0, bounds.right - bounds.left);
-            if (colW > 3 * nodeWidth) {
-                const midLeft = bounds.left + 0.15 * colW;
-                const midRight = bounds.right - 0.15 * colW;
-                if (midRight > midLeft) {
-                    const u = Stable_Unit_Float(`${nodeId}|${node.composition}`);
-                    x = midLeft + u * (midRight - midLeft);
+            const manualPos = State.manualPositions.get(nodeId);
+
+            let x;
+            if (manualPos) {
+                x = manualPos.x;
+            } else {
+                x = (bounds.left + bounds.right) / 2;
+                const nodeWidth = Math.max(1, radius * 2);
+                const colW = Math.max(0, bounds.right - bounds.left);
+                if (colW > 3 * nodeWidth) {
+                    const midLeft = bounds.left + 0.15 * colW;
+                    const midRight = bounds.right - 0.15 * colW;
+                    if (midRight > midLeft) {
+                        const u = Stable_Unit_Float(`${nodeId}|${node.composition}`);
+                        x = midLeft + u * (midRight - midLeft);
+                    }
                 }
             }
 
-            let y = State.manualPositions.has(nodeId)
-                ? State.manualPositions.get(nodeId).y
+            let y = manualPos
+                ? manualPos.y
                 : (nodeY.get(nodeId) ?? (bounds.top + bounds.bottom) / 2);
 
             const minX = bounds.left - box.left;
@@ -1224,9 +1231,9 @@
             }
 
             if (isDraggingNode && draggedNodeId) {
-                // Only Y persists past this drag — Compute_Layout always
-                // recomputes X via the deterministic per-node jitter, exactly
-                // like EoSHolo.py's manual-position handling.
+                // Both X and Y persist past this drag; Compute_Layout only
+                // falls back to the deterministic per-node jitter for nodes
+                // that have never been manually moved.
                 const world = Css_Point_To_World(cssPoint.x, cssPoint.y);
                 State.manualPositions.set(draggedNodeId, { x: world.x, y: world.y });
                 Draw();
