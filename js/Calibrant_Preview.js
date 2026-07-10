@@ -8,10 +8,13 @@
  * (view-only here — there's no in-browser editing on the website).
  *
  * Data comes from the same Calibration_Graph.json built by
- * Build_Calibration_Graph.py — each node's `info.sections`/`info.references`
- * are pre-computed there using the desktop app's own field labels/sections/
- * visibility rules (see Build_Calibration_Info in that script), so this file
- * only has to render already-decided content, not re-derive it.
+ * Build_Calibration_Graph.py — each node's `info.sections` (an ordered list,
+ * each either a normal {name, rows} section or a {name, type: 'references',
+ * references} section for "Pressure Calibration Reference", in the same
+ * order/position as Calibration_Field_Sections) is pre-computed there using
+ * the desktop app's own field labels/sections/visibility rules (see
+ * Build_Calibration_Info in that script), so this file only has to render
+ * already-decided content, not re-derive it.
  *
  * Header/Banner/Footer on this page are the same shared partials as every
  * other app page (mounted by Header.js/Banner.js/Footer.js) — theme
@@ -169,23 +172,27 @@ function Render_Calibrant_Preview(Container, Node) {
     Container.appendChild(Subtitle);
 
     for (const Section of Node.info.sections) {
-        Container.appendChild(Render_Section(Section.name, Section.rows));
+        Container.appendChild(
+            Section.type === "references"
+                ? Render_Reference_Section(Section.name, Section.references)
+                : Render_Section(Section.name, Section.rows)
+        );
     }
+}
 
-    if (Node.info.references.length) {
-        const RefSection = document.createElement("details");
-        RefSection.open = true;
-        RefSection.className = "calibrant-preview-section";
+function Render_Reference_Section(Name, References) {
+    const Details = document.createElement("details");
+    Details.open = true;
+    Details.className = "calibrant-preview-section";
 
-        const Summary = document.createElement("summary");
-        Summary.textContent = "Pressure Calibration Reference";
-        RefSection.appendChild(Summary);
+    const Summary = document.createElement("summary");
+    Summary.textContent = Name;
+    Details.appendChild(Summary);
 
-        for (const Reference of Node.info.references) {
-            RefSection.appendChild(Render_Reference_Block(Reference));
-        }
-        Container.appendChild(RefSection);
+    for (const Reference of References) {
+        Details.appendChild(Render_Reference_Block(Reference));
     }
+    return Details;
 }
 
 function Render_Section(Name, Rows) {

@@ -1397,11 +1397,6 @@ Function_Information = {
         "Latex_Equation": r"P \left( \upsilon \right) = A \left( \frac{ \upsilon - \upsilon_{0} }{ \upsilon_{0} } \right) + B \left( \frac{ \upsilon - \upsilon_{0} }{ \upsilon_{0} } \right)^{2}",
     },
 
-
-    ####################
-    # Linear Scale
-    ####################
-
     "Linear Scale - Raman": {
         "Display_Name": "Linear Scale",
         "Function_Name": "Linear_Scale__Raman__",
