@@ -1263,9 +1263,9 @@ Function_Information = {
     # Linear Scale
     ####################
 
-    "Linear Scale": {
+    "Linear Scale - Luminescence": {
         "Display_Name": "Linear Scale",
-        "Function_Name": "Linear_Scale__",
+        "Function_Name": "Linear_Scale__Luminescence__",
         "Calibration_File_EoS_Name": "LinearShift",
         "Calibration_File_EoS_Order": None,
         "Method": "Luminescence",
@@ -1399,6 +1399,22 @@ Function_Information = {
 
 
     ####################
+    # Linear Scale
+    ####################
+
+    "Linear Scale - Raman": {
+        "Display_Name": "Linear Scale",
+        "Function_Name": "Linear_Scale__Raman__",
+        "Calibration_File_EoS_Name": "LinearShift",
+        "Calibration_File_EoS_Order": None,
+        "Method": "Raman",
+        "Extra_Prep_Work": None,
+        "Unicode_Equation": "",
+        "Latex_Equation": r"P \left( \lambda \right) = \frac{ \lambda - \lambda_{0} }{ A }",
+    },
+
+
+    ####################
     # Study Specific
     ####################
 
@@ -1491,7 +1507,7 @@ Calibration_Field_Sections = {
 
     "Study Information": [
         "Study", "Composition", "Method", "Technique", "Catagory",
-        "Atomic Number", "DOI", "Data Quality Notes", "Notes", "Last Edited",
+        "Atomic Number", "DOI", "Last Edited",
     ],
 
     "Equation of State": [
@@ -1534,7 +1550,8 @@ Calibration_Field_Sections = {
     "Experimental Setup": [
         "Diamond Anvil Cell Type", "Culet Size", "Gasket Material",
         "Pressure Transmitting Medium", "Synchrotron Facility", "Peaks Used",
-        "Reference Temperature", "Temperature Range", "Pressure Range", "Sample Heating",
+        "Reference Temperature", "Temperature Range", "Pressure Range", "Sample Heating", 
+        "Data Quality Notes", "Notes",
     ],
 
 }
@@ -1552,11 +1569,11 @@ Calibration_Multiline_Fields = {
 
 # Derived lookups — built automatically from Function_Information, never edit these directly
     # (display_name, order) → display_name  (for looking up from a calibration entry)
-Equation_Entry_From_Calibration_Entry = {(e['Calibration_File_EoS_Name'], e['Calibration_File_EoS_Order']): display_name for display_name, e in Function_Information.items()}
+Equation_Entry_From_Calibration_Entry = {(e['Calibration_File_EoS_Name'], e['Calibration_File_EoS_Order'], e['Method']): display_name for display_name, e in Function_Information.items()}
     # display_name → group_key used by Create_List_Of_Functions_And_Variables  (strips the trailing __)
 EoS_Group_Key = {display_name: e['Function_Name'][:-2] for display_name, e in Function_Information.items()}
     # (yaml_eos, yaml_order) → group_key  (direct replacement for YAML_EOS_TO_..._KEY)
-EoS_Group_Key_From_Calibration = {(e['Calibration_File_EoS_Name'], e['Calibration_File_EoS_Order']): e['Function_Name'][:-2] for e in Function_Information.values()}
+EoS_Group_Key_From_Calibration = {(e['Calibration_File_EoS_Name'], e['Calibration_File_EoS_Order'], e['Method']): e['Function_Name'][:-2] for e in Function_Information.values()}
     # set of yaml_eos names that need special handling (e.g. AP2 volume unit conversion)
 Equation_Required_Extra_Prep_Work = {e['Calibration_File_EoS_Name'] for e in Function_Information.values() if e['Extra_Prep_Work'] is not None}
 
